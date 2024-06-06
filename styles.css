@@ -1,0 +1,42 @@
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.dropdowns {
+    margin-bottom: 20px;
+}
+
+select {
+    padding: 10px;
+    margin: 5px;
+    background-color: #1f1f1f;
+    color: #e0e0e0;
+    border: 1px solid #333;
+    border-radius: 5px;
+}
+
+#qrcode {
+    margin-top: 20px;
+    text-align: center; /* Выравнивание по центру */
+}
+
+#qrcode-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
