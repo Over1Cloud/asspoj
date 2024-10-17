@@ -138,4 +138,4 @@ def is_mirrored(wagon):
     return wagon == '08' or int(wagon) > 8
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5555)
