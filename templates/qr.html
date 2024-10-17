@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="qr-page">
+    <h1 class="qr-title">QR-код</h1>
+    <h2 class="qr-subtitle">{{ train }} - {{ operation.replace('_', '/') }}</h2>
+    
+    <div class="wagon-selector">
+        <div class="toggle-container">
+            <input type="checkbox" id="wagon-toggle" class="toggle" onchange="updateQR(this.checked ? '09' : '01')">
+            <label for="wagon-toggle" class="toggle-label">
+                <span class="toggle-text left">01</span>
+                <span class="toggle-button"></span>
+                <span class="toggle-text right">09</span>
+            </label>
+        </div>
+    </div>
+    
+    <div class="qr-code-container">
+        <div class="qr-code-wrapper">
+            <div class="qr-code">
+                <img id="qr-image" src="data:image/png;base64,{{ img_data }}" alt="QR Code">
+            </div>
+        </div>
+    </div>
+    
+    <a href="{{ url_for('menu', train=train) }}" class="button back-button">Назад</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function updateQR(wagonNumber) {
+    $.ajax({
+        url: "{{ url_for('update_qr') }}",
+        method: "POST",
+        data: {
+            train: "{{ train }}",
+            wagon: wagonNumber,
+            side: 'left',
+            is_clockwise: true
+        },
+        success: function(response) {
+            $('#qr-image').attr('src', 'data:image/png;base64,' + response.img_data);
+        }
+    });
+}
+</script>
+{% endblock %}

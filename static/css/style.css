@@ -1,0 +1,664 @@
+/* Базовые стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background-color: #000;
+    color: #f5f5f7;
+    line-height: 1.47059;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* Типография */
+h1 {
+    font-size: 48px;
+    line-height: 1.1;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 24px;
+    line-height: 1.2381;
+    font-weight: 400;
+    margin-bottom: 30px;
+}
+
+/* Кнопки */
+.button {
+    display: inline-block;
+    background-color: #0071e3;
+    color: #fff;
+    font-size: 17px;
+    line-height: 1.17648;
+    font-weight: 400;
+    letter-spacing: -0.022em;
+    padding: 12px 22px;
+    border-radius: 980px;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s ease;
+    margin: 10px 0;
+}
+
+.button:hover {
+    background-color: #0077ED;
+}
+
+/* Поиск */
+.search-container {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 680px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 17px;
+    border: none;
+    border-radius: 10px;
+    background-color: #1c1c1e;
+    color: #f5f5f7;
+    transition: background-color 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    background-color: #2c2c2e;
+}
+
+.search-results {
+    margin-top: 10px;
+    background-color: #1c1c1e;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.search-result {
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.search-result:hover {
+    background-color: #2c2c2e;
+}
+
+/* QR код */
+.qr-code-container {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr-code {
+    width: 100%;
+    padding-bottom: 100%; /* Создает квадратный контейнер */
+    position: relative;
+}
+
+.qr-code img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+@media (max-width: 480px) {
+    .qr-code-container {
+        max-width: 250px;
+    }
+}
+
+/* Адаптивность */
+@media only screen and (max-width: 734px) {
+    .container {
+        padding: 30px 16px;
+    }
+
+    h1 {
+        font-size: 36px;
+    }
+
+    h2 {
+        font-size: 21px;
+    }
+
+    .button {
+        width: 100%;
+        padding: 16px 20px;
+    }
+
+    .search-input {
+        font-size: 16px;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.wagon-selector {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.toggle-container {
+    display: inline-block;
+    position: relative;
+    width: 120px;
+    height: 40px;
+    background-color: #1c1c1e;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.toggle {
+    display: none;
+}
+
+.toggle-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+
+.toggle-button {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 56px;
+    height: 32px;
+    background-color: #0071e3;
+    border-radius: 16px;
+    transition: transform 0.2s ease;
+}
+
+.toggle:checked + .toggle-label .toggle-button {
+    transform: translateX(56px);
+}
+
+.toggle-text {
+    position: relative;
+    z-index: 1;
+    font-size: 16px;
+    font-weight: bold;
+    color: #f5f5f7;
+    transition: color 0.2s ease;
+    width: 50%;
+    text-align: center;
+    line-height: 40px;
+}
+
+.toggle-text.left {
+    padding-right: 10px;
+}
+
+.toggle-text.right {
+    padding-left: 10px;
+}
+
+.toggle:checked + .toggle-label .toggle-text.left,
+.toggle:not(:checked) + .toggle-label .toggle-text.right {
+    color: #1c1c1e;
+}
+
+.train-image {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.train-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+.qr-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.arrow {
+    font-size: 36px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.wagon-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#wagon-number {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#equipment {
+    font-size: 16px;
+}
+
+.control-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.control-buttons button,
+.control-buttons select {
+    flex: 1;
+    margin: 0 5px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #1c1c1e;
+    color: #f5f5f7;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.control-buttons select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f5f5f7' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+.mirrored {
+    transform: scaleX(-1);
+}
+
+.train-number {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.train-image-container {
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #1c1c1e;
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 10px;
+    position: relative;
+}
+
+.train-number {
+    font-size: 24px;
+    color: #fff;
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+
+.wagon-image {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+@keyframes slideInFromRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes slideInFromLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.slide-in-right {
+    animation: slideInFromRight 0.5s forwards;
+}
+
+.slide-in-left {
+    animation: slideInFromLeft 0.5s forwards;
+}
+
+.slide-out-left {
+    transform: translateX(-100%);
+}
+
+.slide-out-right {
+    transform: translateX(100%);
+}
+
+.equipment-indicators {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.indicator {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    color: #0071e3;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.indicator.active {
+    opacity: 1;
+}
+
+.top-left {
+    top: 10px;
+    left: 10px;
+}
+
+.top-right {
+    top: 10px;
+    right: 10px;
+}
+
+.bottom-left {
+    bottom: 10px;
+    left: 10px;
+}
+
+.bottom-right {
+    bottom: 10px;
+    right: 10px;
+}
+
+/* Добавьте эти стили в конец файла */
+
+.qr-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.qr-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.qr-subtitle {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.wagon-selector {
+    margin-bottom: 20px;
+}
+
+.qr-code {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr-code img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.back-button {
+    width: 100%;
+    max-width: 300px;
+}
+
+@media (max-width: 480px) {
+    .qr-title {
+        font-size: 24px;
+    }
+
+    .qr-subtitle {
+        font-size: 18px;
+    }
+
+    .qr-code {
+        max-width: 250px;
+    }
+}
+
+.to1-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Уменьшено с 20px до 10px */
+}
+
+.train-image-container {
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 16 / 9;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1c1c1e;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.wagon-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.qr-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.qr-code {
+    width: 220px;
+    height: 220px;
+}
+
+.arrow {
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 10px;
+}
+
+@media (min-width: 768px) {
+    .to1-container {
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .train-image-container {
+        max-width: 400px;
+        height: 300px;
+    }
+}
+
+.train-number {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.control-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.control-group label {
+    font-size: 14px;
+    color: #999;
+}
+
+.control-buttons button,
+.control-buttons select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+.control-buttons button:hover,
+.control-buttons select:hover {
+    background-color: #444;
+}
+
+@media (max-width: 480px) {
+    .control-buttons {
+        flex-direction: column;
+    }
+    
+    .control-group {
+        width: 100%;
+    }
+}
+
+.qr-code {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+.qr-code-wrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Стили для QR-кода на странице "Приемка/Сдача" */
+.qr-page .qr-code {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.qr-page .qr-code img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Стили для QR-кода на странице ТО-1 */
+.to1-container .qr-code {
+    width: 192px;
+    height: 192px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.to1-container .qr-code img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+/* Стили для оверлея таймера (только для ТО-1) */
+.to1-container .qr-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.to1-container .qr-overlay svg {
+    width: 100%;
+    height: 100%;
+}
+
+.to1-container .qr-overlay rect {
+    fill: none;
+    stroke: #ddd;
+    stroke-width: 4;
+    rx: 10;
+    ry: 10;
+}
+
+.to1-container #timer-rect {
+    stroke: #4CAF50;
+    stroke-dasharray: 784;
+    stroke-dashoffset: 784;
+}

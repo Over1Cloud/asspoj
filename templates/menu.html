@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ train }}</h1>
+<h2>Выберите операцию</h2>
+<a href="{{ url_for('generate_qr', train=train, operation='Приемка_Сдача') }}" class="button">Приемка/Сдача</a>
+<a href="{{ url_for('generate_to1', train=train) }}" class="button">ТО-1</a>
+<a href="{{ url_for('index') }}" class="button">Назад</a>
+{% endblock %}
+

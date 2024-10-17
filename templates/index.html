@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>АСПОЖС QR Генератор</h1>
+<h2>Выберите электропоезд</h2>
+<form action="{{ url_for('select_train') }}" method="post">
+    <div class="search-container">
+        <input type="text" id="trainSearch" name="train" class="search-input" placeholder="Поиск электропоезда..." autocomplete="off" value="{{ selected_train }}">
+        <div id="searchResults" class="search-results"></div>
+    </div>
+    <button type="submit" id="continueButton" class="button" style="display: none;">Продолжить</button>
+</form>
+<script>
+const trains = {{ trains|tojson }};
+const searchInput = document.getElementById('trainSearch');
+const searchResults = document.getElementById('searchResults');
+const continueButton = document.getElementById('continueButton');
+let selectedTrain = '{{ selected_train }}';
+
+if (selectedTrain) {
+    continueButton.style.display = 'block';
+}
+
+searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const filteredTrains = trains.filter(train => train.toLowerCase().includes(searchTerm));
+    
+    searchResults.innerHTML = '';
+    filteredTrains.forEach(train => {
+        const div = document.createElement('div');
+        div.textContent = train;
+        div.classList.add('search-result');
+        div.addEventListener('click', function() {
+            searchInput.value = train;
+            selectedTrain = train;
+            searchResults.style.display = 'none';
+            continueButton.style.display = 'block';
+        });
+        searchResults.appendChild(div);
+    });
+    
+    searchResults.style.display = filteredTrains.length > 0 ? 'block' : 'none';
+    continueButton.style.display = 'none';
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target !== searchInput && e.target !== searchResults) {
+        searchResults.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

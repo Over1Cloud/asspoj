@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="to1-container">
+    <div class="left-column">
+        <div class="train-image-container">
+            <h1 class="train-number">{{ train }}</h1>
+            <img id="wagon-image" src="{{ url_for('static', filename='img/golova.png') }}" alt="Вагон" class="wagon-image">
+        </div>
+        <div class="wagon-info">
+            <div id="wagon-number">Вагон 01</div>
+            <div id="equipment"></div>
+        </div>
+    </div>
+    <div class="right-column">
+        <div class="qr-container">
+            <button class="arrow left" onclick="changeWagon(-1)">&#10094;</button>
+            <div class="qr-code-wrapper">
+                <div class="qr-code">
+                    <img id="qr-image" src="data:image/png;base64,{{ img_data }}" alt="QR Code">
+                </div>
+                <svg width="200" height="200" class="qr-overlay">
+                    <rect x="2" y="2" width="196" height="196" fill="none" stroke="#ddd" stroke-width="4" rx="10" ry="10"/>
+                    <rect x="2" y="2" width="196" height="196" fill="none" stroke="#4CAF50" stroke-width="4" rx="10" ry="10"
+                          stroke-dasharray="784" stroke-dashoffset="784" id="timer-rect"/>
+                </svg>
+            </div>
+            <button class="arrow right" onclick="changeWagon(1)">&#10095;</button>
+        </div>
+    </div>
+</div>
+<div class="control-buttons">
+    <button id="rotationButton" onclick="toggleRotation()">По часовой</button>
+    <select id="wagon-select" onchange="selectWagon(this.value)">
+        <option value="01">01</option>
+        <option value="02">02</option>
+        <option value="03">03</option>
+        <option value="04">04</option>
+        <option value="05">05</option>
+        <option value="06">06</option>
+        <option value="08">08</option>
+        <option value="07">07</option>
+        <option value="11">11</option>
+        <option value="10">10</option>
+        <option value="09">09</option>
+    </select>
+    <button id="sideButton" onclick="toggleSide()">Левая</button>
+    <button id="auto-button" class="button">Автопереключение</button>
+    <select id="timer-select" onchange="changeTimerDuration(this.value)">
+        <option value="5">5 сек</option>
+        <option value="7.5">7.5 сек</option>
+        <option value="10" selected>10 сек</option>
+        <option value="15">15 сек</option>
+        <option value="20">20 сек</option>
+    </select>
+</div>
+<a href="{{ url_for('menu', train=train) }}" class="button">Назад</a>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+const wagonTypes = {
+    '01': 'golova', '09': 'golova',
+    '03': 'pricep', '05': 'pricep', '07': 'pricep', '11': 'pricep',
+    '02': 'motor', '04': 'motor', '06': 'motor', '08': 'motor', '10': 'motor'
+};
+
+let currentWagon = '{{ wagon }}';
+let currentSide = '{{ side }}';
+let isClockwise = {{ 'true' if request.args.get('is_clockwise', 'true') == 'true' else 'false' }};
+let currentEquipment = 0; // 0 для первого оборудования, 1 для второго
+const wagonOrderForward = ['01', '02', '03', '04', '05', '06', '08', '07', '11', '10', '09'];
+const wagonOrderBackward = ['09', '10', '11', '07', '08', '06', '05', '04', '03', '02', '01'];
+
+let autoModeInterval;
+let isAutoMode = false;
+let timerDuration = 10000; // Начальная длительность таймера в миллисекундах
+
+function updateIndicators() {
+    $('.indicator').removeClass('active');
+    let activeIndicator;
+    if (currentSide === 'left') {
+        activeIndicator = currentEquipment === 0 ? '.top-left' : '.bottom-left';
+    } else {
+        activeIndicator = currentEquipment === 0 ? '.top-right' : '.bottom-right';
+    }
+    $(activeIndicator).addClass('active');
+}
+
+function updateQR() {
+    $.ajax({
+        url: "/update_qr",
+        method: "POST",
+        data: {
+            train: "{{ train }}",
+            wagon: currentWagon,
+            side: currentSide,
+            is_clockwise: isClockwise
+        },
+        success: function(response) {
+            $('#qr-image').attr('src', 'data:image/png;base64,' + response.img_data);
+            $('#equipment').text(response.equipment);
+            $('#wagon-number').text(response.full_number);
+            
+            // Обновляем информацию о QR-коде
+            $('#qr-wagon-number span').text(response.full_number);
+            $('#qr-equipment span').text(response.equipment);
+        },
+        error: function(xhr, status, error) {
+            console.error("Ошибка при обновлении QR-кода:", error);
+            alert("Произошла ошибка при обновлении QR-кода. Пожалуйста, попробуйте еще раз.");
+        }
+    });
+}
+
+function updateWagonImage() {
+    if (currentWagon === undefined) {
+        console.error('Номер вагона не определен');
+        return;
+    }
+    
+    let imagePath;
+    let shouldFlip = false;
+    
+    if (['01', '09'].includes(currentWagon)) {
+        imagePath = "{{ url_for('static', filename='img/golova.png') }}";
+    } else if (['03', '05', '07', '11'].includes(currentWagon)) {
+        imagePath = "{{ url_for('static', filename='img/pricep.png') }}";
+    } else if (['02', '04', '06', '08', '10'].includes(currentWagon)) {
+        imagePath = "{{ url_for('static', filename='img/motor.png') }}";
+    } else {
+        console.error('Неизвестный номер вагона:', currentWagon);
+        return;
+    }
+    
+    // Определяем, нужно ли зеркалить изображение
+    if (parseInt(currentWagon) > 8) {
+        shouldFlip = true;
+    }
+    
+    $('#wagon-image').attr('src', imagePath);
+    
+    // Применяем или убираем зеркальное отображение
+    if (shouldFlip) {
+        $('#wagon-image').css('transform', 'scaleX(-1)');
+    } else {
+        $('#wagon-image').css('transform', 'scaleX(1)');
+    }
+}
+
+function changeWagon(delta) {
+    currentEquipment = 0;
+    let currentOrder = isClockwise ? 
+        (currentSide === 'left' ? wagonOrderForward : wagonOrderBackward) :
+        (currentSide === 'left' ? wagonOrderBackward : wagonOrderForward);
+    let index = currentOrder.indexOf(currentWagon);
+    
+    if (delta > 0) {
+        index = (index + 1) % currentOrder.length;
+    } else {
+        index = (index - 1 + currentOrder.length) % currentOrder.length;
+    }
+    currentWagon = currentOrder[index];
+    
+    if ((delta > 0 && index === 0) || (delta < 0 && index === currentOrder.length - 1)) {
+        if ((isClockwise && currentSide === 'left') || (!isClockwise && currentSide === 'right')) {
+            currentSide = currentSide === 'left' ? 'right' : 'left';
+            currentOrder = isClockwise ? wagonOrderBackward : wagonOrderForward;
+            index = delta > 0 ? 0 : currentOrder.length - 1;
+            currentWagon = currentOrder[index];
+        }
+    }
+    
+    $('#wagon-select').val(currentWagon);
+    updateSideButton();
+    updateRotationButton();
+    updateQR();
+    updateIndicators();
+    updateWagonImage();
+}
+
+function updateEquipment() {
+    if (currentSide === 'left') {
+        if ((isClockwise && ['01', '02', '03', '04', '05', '06'].includes(currentWagon)) ||
+            (!isClockwise && ['09', '10', '11', '07', '08'].includes(currentWagon))) {
+            return ['КП1-КП2 лев.', 'КП3-КП4 лев.'][currentEquipment];
+        } else {
+            return ['КП3-КП4 лев.', 'КП1-КП2 лев.'][currentEquipment];
+        }
+    } else {
+        if ((isClockwise && ['09', '10', '11', '07', '08'].includes(currentWagon)) ||
+            (!isClockwise && ['01', '02', '03', '04', '05', '06'].includes(currentWagon))) {
+            return ['КП1-КП2 пр.', 'КП3-КП4 пр.'][currentEquipment];
+        } else {
+            return ['КП3-КП4 пр.', 'КП1-КП2 пр.'][currentEquipment];
+        }
+    }
+}
+
+function selectWagon(wagon) {
+    currentWagon = wagon;
+    updateQR();
+}
+
+function toggleSide() {
+    currentSide = currentSide === 'left' ? 'right' : 'left';
+    currentEquipment = 0;
+    updateSideButton();
+    updateQR();
+    updateIndicators();
+}
+
+function toggleRotation() {
+    isClockwise = !isClockwise;
+    updateRotationButton();
+    updateQR();
+    updateIndicators();
+}
+
+function updateSideButton() {
+    $('#sideButton').text(currentSide === 'left' ? 'Левая' : 'Правая');
+}
+
+function updateRotationButton() {
+    $('#rotationButton').text(isClockwise ? 'По часовой' : 'Против часовой');
+}
+
+function initializeButtonStates() {
+    updateSideButton();
+    updateRotationButton();
+}
+
+$(document).ready(function() {
+    initializeButtonStates();
+    updateWagonImage();
+    updateQR();
+    updateIndicators();
+
+    $('#auto-button').click(function() {
+        isAutoMode = !isAutoMode;
+        $(this).text(isAutoMode ? 'Остановить' : 'Автопереключение');
+        if (isAutoMode) {
+            startAutoMode();
+        } else {
+            stopAutoMode();
+        }
+    });
+});
+
+function startAutoMode() {
+    autoModeInterval = setInterval(function() {
+        currentEquipment = (currentEquipment + 1) % 2;
+        if (currentEquipment === 0) {
+            changeWagon(1);
+        } else {
+            updateQR();
+            updateIndicators();
+        }
+        animateTimer();
+    }, timerDuration);
+}
+
+function stopAutoMode() {
+    clearInterval(autoModeInterval);
+}
+
+function changeTimerDuration(duration) {
+    timerDuration = parseFloat(duration) * 1000;
+    if (isAutoMode) {
+        stopAutoMode();
+        startAutoMode();
+    }
+}
+
+function animateTimer() {
+    const timerRect = document.getElementById('timer-rect');
+    timerRect.style.transition = 'none';
+    timerRect.style.strokeDashoffset = '784';
+    setTimeout(() => {
+        timerRect.style.transition = `stroke-dashoffset ${timerDuration}ms linear`;
+        timerRect.style.strokeDashoffset = '0';
+    }, 50);
+}
+
+</script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/to1.css') }}">
+{% endblock %}
