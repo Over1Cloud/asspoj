@@ -3,11 +3,17 @@
 # Обновление системы
 sudo apt update && sudo apt upgrade -y
 
-# Установка Python и pip, если они еще не установлены
-sudo apt install python3 python3-pip -y
+# Установка Python и venv
+sudo apt install python3 python3-venv python3-pip -y
+
+# Создание виртуального окружения
+python3 -m venv venv
+
+# Активация виртуального окружения
+source venv/bin/activate
 
 # Установка зависимостей из requirements.txt
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 # Создание службы systemd для автозапуска приложения
 cat << EOF | sudo tee /etc/systemd/system/qrgenerator.service
@@ -18,7 +24,7 @@ After=network.target
 [Service]
 User=$USER
 WorkingDirectory=$(pwd)
-ExecStart=$(which python3) $(pwd)/main.py
+ExecStart=$(pwd)/venv/bin/python $(pwd)/main.py
 Restart=always
 
 [Install]
